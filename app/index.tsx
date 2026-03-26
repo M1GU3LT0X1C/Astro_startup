@@ -1,4 +1,14 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+// 🔥 BASE DO TEU CELULAR (pode ajustar depois se quiser)
+const guidelineBaseWidth = 360;
+const guidelineBaseHeight = 800;
+
+// 🔥 FUNÇÕES DE SCALE
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 export default function HomeScreen() {
   return (
@@ -16,6 +26,7 @@ export default function HomeScreen() {
       <Image
         source={require('../assets/images/cat_astro.png')}
         style={styles.mainImage}
+        resizeMode="contain"
       />
 
       {/* Imagem Do cachorro */}
@@ -40,56 +51,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EAEAEA',
-    padding: 20,
+    padding: scale(20),
   },
 
   textContainer: {
-    width: 185,
-    height: 118,
-    top: 127,
-    left: 42,
+    width: scale(185),
+    height: verticalScale(118),
+    position: 'absolute',
+    top: verticalScale(167),
+    left: scale(42),
   },
 
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    fontFamily: 'ComicNeue',
+    fontSize: scale(32),
+    fontWeight: 'bold'
   },
 
   subtitle: {
-    fontSize: 14,
-    marginTop: 5,
+    fontSize: scale(14),
+    marginTop: verticalScale(5),
     color: '#555',
   },
 
   mainImage: {
-    width: '115%',
-    height: 450,
+    width: scale(600),
+    height: verticalScale(400),
     position: 'absolute',
-    right: -200,
-    top: 120,
+    right: scale(-290),
+    top: verticalScale(120),
   },
 
   Imagedog: {
-    width: 700,
-    height: 400,
+    width: scale(700),
+    height: verticalScale(400),
     position: 'absolute',
-    left: -150,
-    top: 250,
+    left: scale(-150),
+    top: verticalScale(290),
   },
 
   button: {
     position: 'absolute',
-    bottom: 70,
+    bottom: verticalScale(60),
     alignSelf: 'center',
-    backgroundColor: '#1E1B4B',
-    paddingVertical: 25,
-    paddingHorizontal: 50,
-    borderRadius: 20,
+    backgroundColor: '#0D0062',
+    paddingVertical: verticalScale(25),
+    paddingHorizontal: scale(50),
+    borderRadius: scale(20),
   },
 
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: scale(14),
   },
-})
+});
