@@ -1,16 +1,20 @@
+import { useRouter } from 'expo-router';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-// 🔥 BASE DO TEU CELULAR (pode ajustar depois se quiser)
+// BASE
 const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
 
-// 🔥 FUNÇÕES DE SCALE
+// SCALE
 const scale = (size:number) => (width / guidelineBaseWidth) * size;
 const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 export default function HomeScreen() {
+
+  const router = useRouter(); 
+
   return (
     <View style={styles.container}>
       
@@ -22,24 +26,25 @@ export default function HomeScreen() {
         </Text>
       </View>
 
-      {/* Imagem Do gato */}
+      {/* Gato */}
       <Image
         source={require('../assets/images/cat_astro.png')}
         style={styles.mainImage}
         resizeMode="contain"
       />
 
-      {/* Imagem Do cachorro */}
-      <View>
-        <Image
-          source={require('../assets/images/dog_astro.png')}
-          style={styles.Imagedog}
-          resizeMode="contain"
-        />
-      </View>
+      {/* Cachorro */}
+      <Image
+        source={require('../assets/images/dog_astro.png')}
+        style={styles.Imagedog}
+        resizeMode="contain"
+      />
 
       {/* Botão */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => router.push('/escolher-tipo' as any)}
+      >
         <Text style={styles.buttonText}>Mapear órbita</Text>
       </TouchableOpacity>
 
