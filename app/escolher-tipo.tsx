@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 
     flexDirection: 'row',
     alignItems: 'center',
-    gap: scale(15),
+    marginRight: scale(15),
   },
 
   icon: {

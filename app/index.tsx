@@ -43,7 +43,7 @@ export default function HomeScreen() {
       {/* Botão */}
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.push('/escolher-tipo' as any)}
+        onPress={() => router.push('/login')}
       >
         <Text style={styles.buttonText}>Mapear órbita</Text>
       </TouchableOpacity>
@@ -55,7 +55,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EAEAEA',
+    backgroundColor: '#FFFCFD',
     padding: scale(20),
   },
 
@@ -68,14 +68,15 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: scale(32),
-    fontWeight: 'bold'
+    fontSize: scale(50),
+    fontFamily: 'ComicNeue-Bold',
   },
 
   subtitle: {
-    fontSize: scale(14),
+    fontSize: scale(20),
     marginTop: verticalScale(5),
-    color: '#555',
+    fontFamily: 'IstokWeb-Regular',
+    color: '#000000',
   },
 
   mainImage: {
@@ -105,8 +106,9 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    color: '#fff',
+    color: '#FFFCFD',
     fontWeight: 'bold',
-    fontSize: scale(14),
+    fontSize: scale(18),
+    fontFamily: 'IstokWeb-Regular',
   },
 });
