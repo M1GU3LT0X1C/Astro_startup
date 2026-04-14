@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
@@ -11,43 +11,51 @@ const guidelineBaseHeight = 800;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 const verticalScale = (size: number) => (height / guidelineBaseHeight) * size;
 
-export default function EscolherTipo() {
-  const router = useRouter();
-
+export default function Estacao() {
+    const router = useRouter();
   return (
     <View style={styles.container}>
 
-      <Text style={styles.title}>O que você faz aqui?</Text>
+      <Text style={styles.title}>
+        Que tipo de Estação de apoio você é?
+      </Text>
 
-      {/* EXPLORADOR */}
-      <TouchableOpacity style={styles.card}>
-        <Image
-          source={require('../assets/images/explorador.png')}
-          style={styles.icon}
-        />
+      {/* BASE ESTELAR */}
+      <TouchableOpacity 
+        style={styles.card}
+        onPress={() => router.push('/cadastro-base')}
+        >
+        <View style={styles.iconWrapper}>
+          <Image
+            source={require('../assets/images/base.png')}
+            style={styles.icon}
+          />
+        </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.cardTitle}>Explorador</Text>
+          <Text style={styles.cardTitle}>Base Estelar</Text>
           <Text style={styles.cardSubtitle}>
-            Quero encontrar um pet próximo
+            Organização estruturada
           </Text>
         </View>
       </TouchableOpacity>
 
-      {/* ESTAÇÃO */}
+      {/* GUARDIÃO */}
       <TouchableOpacity 
-          style={styles.card}
-          onPress={() => router.push('/estacao')}
+        style={styles.card}
+        onPress={() => router.push('/cadastro-guardiao')}
         >
-        <Image
-          source={require('../assets/images/estacao.png')} // adiciona esse ícone
-          style={styles.icon}
-        />
+        <View style={styles.iconWrapper}>
+          <Image
+            source={require('../assets/images/guardiao.png')}
+            style={styles.icon}
+          />
+        </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.cardTitle}>Estação de apoio</Text>
+          <Text style={styles.cardTitle}>Guardião de Órbita</Text>
           <Text style={styles.cardSubtitle}>
-            Quero cadastrar pets para adoção
+            Protetor autônomo
           </Text>
         </View>
       </TouchableOpacity>
@@ -59,16 +67,16 @@ export default function EscolherTipo() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFCFD',
+    backgroundColor: '#EAEAEA',
     padding: scale(20),
     justifyContent: 'center',
   },
 
   title: {
-  fontSize: scale(25),
-  marginBottom: scale(50),
-  textAlign: 'center',
-  fontFamily: 'IstokWeb-Regular',
+    fontSize: scale(25),
+    marginBottom: scale(40),
+    textAlign: 'center',
+    fontFamily: 'IstokWeb-Regular',
   },
 
   card: {
@@ -81,10 +89,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  icon: {
-    width: scale(50),
-    height: scale(50),
+  iconWrapper: {
+    backgroundColor: '#DE4067',
+    padding: scale(10),
+    borderRadius: scale(50),
     marginRight: scale(15),
+  },
+
+  icon: {
+    width: scale(30),
+    height: scale(30),
   },
 
   textContainer: {
