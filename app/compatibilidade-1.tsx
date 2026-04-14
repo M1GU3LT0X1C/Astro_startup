@@ -1,82 +1,67 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
+// BASE
 const guidelineBaseWidth = 360;
-const guidelineBaseHeight = 800;
 
+// SCALE
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
-const verticalScale = (size: number) => (height / guidelineBaseHeight) * size;
 
-export default function CadastroGuardiao() {
+export default function Compatibilidade1() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
 
-      {/* VOLTAR */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      {/* BACK */}
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => router.back()}
+      >
         <Image
           source={require('../assets/images/back.png')}
           style={styles.backIcon}
         />
       </TouchableOpacity>
 
-      <Text style={styles.title}>
-        Registrando perfil de navegação...
+      {/* HEADER */}
+      <Text style={styles.subtitle}>
+        Dados de compatibilidade
       </Text>
 
-      <Text style={styles.subtitle}>
-        Dados de identificação
+      <Text style={styles.title}>
+        Perfil do ambiente
       </Text>
 
       <Text style={styles.description}>
-        Ative seu sinal: Informe seus dados de identificação e coordenadas para colocar os Astros sob sua guarda na órbita de novos exploradores.
+        Sincere suas experiências. Estes dados ajudam a estação de apoio a confirmar se seu estilo e o destino ideal para o Astro que você quer adotar.
       </Text>
 
       {/* INPUTS */}
       <TextInput 
+        placeholder="Você mora em:" 
         style={styles.input} 
-        placeholder="Nome"
-        placeholderTextColor="#888"
+        placeholderTextColor="#777" 
       />
 
       <TextInput 
+        placeholder="Quanto tempo você passa em casa?" 
         style={styles.input} 
-        placeholder="E-mail"
-        placeholderTextColor="#888"
-      />
-
-      <View style={styles.row}>
-        <TextInput 
-          style={[styles.input, styles.half]} 
-          placeholder="CEP"
-          placeholderTextColor="#888"
-        />
-        <TextInput 
-          style={[styles.input, styles.half]} 
-          placeholder="Número"
-          placeholderTextColor="#888"
-        />
-      </View>
-
-      <TextInput 
-        style={styles.input} 
-        placeholder="CPF"
-        placeholderTextColor="#888"
+        placeholderTextColor="#777" 
       />
 
       <TextInput 
+        placeholder="Você tem/teve outros pets?" 
         style={styles.input} 
-        placeholder="Rede social"
-        placeholderTextColor="#888"
+        placeholderTextColor="#777" 
       />
 
-      {/* BOTÃO */}
-      <TouchableOpacity 
+      {/* BUTTON */}
+      <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push('/guardiao-final')}
+        onPress={() => router.push('/compatibilidade-2')}
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
@@ -113,7 +98,7 @@ const styles = StyleSheet.create({
   },
 
   subtitle: {
-    fontSize: scale(18),
+    fontSize: scale(20),
     marginBottom: scale(5),
     fontFamily: 'IstokWeb-Regular',
   },
@@ -126,28 +111,17 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#D9D9D9',
     padding: scale(15),
-    borderRadius: scale(18),
+    borderRadius: scale(15),
     marginBottom: scale(15),
     fontFamily: 'IstokWeb-Regular',
-    borderWidth: 1,
-    borderColor: '#CFCFCF',
-  },
-
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  half: {
-    width: '48%',
   },
 
   button: {
     backgroundColor: '#0D0062',
     padding: scale(15),
-    borderRadius: scale(20),
+    borderRadius: scale(15),
     alignItems: 'center',
     marginTop: scale(30),
   },
