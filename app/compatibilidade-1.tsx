@@ -1,5 +1,5 @@
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
-    width: scale(50),
+    width: scale(60),
     height: scale(50),
     alignItems: 'center',
     justifyContent: 'center',
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     padding: scale(15),
     borderRadius: scale(15),
     alignItems: 'center',
-    marginTop: scale(30),
+    marginTop: scale(150),
   },
 
   buttonText: {

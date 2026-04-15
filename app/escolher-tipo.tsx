@@ -68,10 +68,10 @@ const styles = StyleSheet.create({
   },
 
   title: {
-  fontSize: scale(25),
-  marginBottom: scale(50),
-  textAlign: 'center',
-  fontFamily: 'IstokWeb-Regular',
+    fontSize: scale(20),
+    marginBottom: scale(40),
+    textAlign: 'center',
+    fontFamily: 'IstokWeb-Regular',
   },
 
   card: {

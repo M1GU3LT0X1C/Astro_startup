@@ -1,13 +1,25 @@
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import {
+  Dimensions,
   StyleSheet,
   Text,
-  View,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
+
+const { width, height } = Dimensions.get('window');
+
+// BASE
+const guidelineBaseWidth = 360;
+const guidelineBaseHeight = 800;
+
+// SCALE
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
+
 
 export default function Login() {
   const router = useRouter();
@@ -15,6 +27,47 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [salvar, setSalvar] = useState(false);
+
+  // FUNÇÃO DE LOGIN (integração com backend)
+  const handleLogin = async () => {
+
+    // Validação simples
+    if (!email || !senha) {
+      alert('Preencha email e senha');
+      return;
+    }
+
+    try {
+      // Requisição para o backend
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // tipo de envio
+        },
+        body: JSON.stringify({
+          email: email, 
+          senha: senha, 
+        }),
+      });
+
+      // Converte resposta para JSON
+      const data = await response.json();
+
+      console.log('clicou no botão');
+
+      // Se deu certo (depois você melhora isso com banco)
+      if (data.msg === 'Funcionando!') {
+        alert('Bem-vindo ao Astro 🚀');
+        router.push('/homebase');
+      }
+
+    } catch (error) {
+      console.log(error);
+
+      // Erro de conexão
+      alert('Erro ao conectar com servidor');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -59,7 +112,7 @@ export default function Login() {
       <View style={styles.buttonWrapper}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => console.log('Login pressionado')}
+          onPress={handleLogin}
         >
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
@@ -71,7 +124,9 @@ export default function Login() {
           <Text style={styles.footerText}>Cadastrar</Text>
         </TouchableOpacity>
 
-        <Text style={styles.footerText}>Esqueci a senha</Text>
+        <TouchableOpacity onPress={() => router.push('/recuperar-senha')}>
+          <Text style={styles.footerText}>Esqueci a senha</Text>
+        </TouchableOpacity>
       </View>
 
       <StatusBar style="auto" />
@@ -83,45 +138,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EDEDED',
-    padding: 24,
+    padding: scale(24),
     justifyContent: 'center',
   },
   welcome: {
-    fontSize: 20,
+    fontSize: scale(20),
     color: '#000000',
-    marginBottom: 10,
+    marginBottom: scale(10),
     fontFamily: 'IstokWeb-Regular',
 
   },
   title: {
-    fontSize: 50,
+    fontSize: scale(50),
     fontFamily: 'ComicNeue-Bold',
   },
   subtitle: {
-    fontSize: 20,
-    marginBottom: 30,
+    fontSize: scale(18),
+    marginBottom: scale(15),
     fontFamily: 'IstokWeb-Regular',
   },
   input: {
     backgroundColor: '#D9D9D9',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 15,
-    fontSize: 18,
+    borderRadius: scale(12),
+    padding: scale(14),
+    marginBottom: scale(15),
+    fontSize: scale(18),
     fontFamily: 'IstokWeb-Regular',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 25,
-    marginLeft: 30,
+    marginBottom: scale(35),
+    marginLeft: scale(30),
   },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
+    width: scale(20),
+    height: verticalScale(20),
+    borderWidth: scale(1),
     borderColor: '#555',
-    borderRadius: 4,
+    borderRadius: scale(4),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -131,44 +186,44 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     color: '#FFF',
-    fontSize: 14,
+    fontSize: scale(10),
   },
   checkboxText: {
-    marginLeft: 8,
+    marginLeft: scale(8),
     color: '#555',
-    fontSize: 15,
+    fontSize: scale(15),
     fontFamily: 'IstokWeb-Regular',
   },
     buttonWrapper: {
     borderWidth: 2,
     borderStyle: 'dashed',
     borderColor: '#8A38F5',
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    alignSelf: 'center', // 👈 ADICIONA ISSO
+    padding: scale(20),
+    borderRadius: scale(16),
+    marginBottom: verticalScale(20),
+    alignSelf: 'center', 
   },
   button: {
   backgroundColor: '#0D0062',
-  paddingVertical: 20,
-  paddingHorizontal: 105, // 👈 deixa mais estreito/bonito
-  borderRadius: 16,
+  paddingVertical: verticalScale(20),
+  paddingHorizontal: scale(105), 
+  borderRadius: scale(16),
   alignItems: 'center',
   },
   buttonText: {
     color: '#FFF',
-    fontSize: 20,
+    fontSize: scale(18),
     fontWeight: 'bold',
     fontFamily: 'IstokWeb-Regular',
   },
   footer: {
   flexDirection: 'row',
   justifyContent: 'space-between',
-  marginTop: 100, //
+  marginTop: verticalScale(100), //
   },
   footerText: {
     color: '#000000',
-    fontSize: 20,
+    fontSize: scale(20),
     fontFamily: 'IstokWeb-Regular',
   },
 });

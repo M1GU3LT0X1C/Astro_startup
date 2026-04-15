@@ -1,5 +1,5 @@
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#0D0062',
     padding: scale(15),
-    borderRadius: scale(20),
+    borderRadius: scale(15),
     alignItems: 'center',
     marginTop: scale(30),
   },

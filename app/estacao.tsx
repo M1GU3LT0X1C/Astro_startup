@@ -1,5 +1,5 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: scale(25),
+    fontSize: scale(20),
     marginBottom: scale(40),
     textAlign: 'center',
     fontFamily: 'IstokWeb-Regular',
