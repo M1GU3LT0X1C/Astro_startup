@@ -89,7 +89,7 @@ export default function HomeBase() {
           <Image source={require('../assets/images/add.png')} style={styles.addIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/chat-base')}>
           <Image source={require('../assets/images/chat.png')} style={styles.navIcon} />
         </TouchableOpacity>
 

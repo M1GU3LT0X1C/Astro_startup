@@ -26,7 +26,7 @@ export default function HomeGuard() {
 
       {/* POST INPUT */}
       <View style={styles.postBox}>
-        <Image source={require('../assets/images/bianca.png')} style={styles.avatar} />
+        <Image source={require('../assets/images/gabriel.png')} style={styles.avatar} />
         <Text style={styles.postPlaceholder}>Poste algo...</Text>
         <Image source={require('../assets/images/galeria.png')} style={styles.iconMedium} />
       </View>
@@ -89,7 +89,7 @@ export default function HomeGuard() {
           <Image source={require('../assets/images/add.png')} style={styles.addIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/chat-guardiao')}>
           <Image source={require('../assets/images/chat.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
