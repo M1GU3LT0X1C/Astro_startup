@@ -1,4 +1,5 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -6,6 +7,7 @@ const guidelineBaseWidth = 360;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function HomeBase() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
 
@@ -80,11 +82,14 @@ export default function HomeBase() {
           <Image source={require('../assets/images/pata.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => router.push('/criar-astro')}
+        >
           <Image source={require('../assets/images/add.png')} style={styles.addIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/chat-base')}>
           <Image source={require('../assets/images/chat.png')} style={styles.navIcon} />
         </TouchableOpacity>
 

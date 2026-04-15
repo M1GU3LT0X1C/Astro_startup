@@ -212,7 +212,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFF',
+<<<<<<< HEAD
     fontSize: scale(18),
+=======
+    fontSize: 18,
+>>>>>>> origin/meu_astrinho
     fontWeight: 'bold',
     fontFamily: 'IstokWeb-Regular',
   },
