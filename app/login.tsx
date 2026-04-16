@@ -66,7 +66,7 @@ export default function Login() {
       Toast.show({
         type: 'error',
         text1: 'Erro de conexão',
-        text2: 'Não foi possível conectar ao servidor',
+        text2: 'Não foi possível conectar ao servidor.',
       });
     }
   };
