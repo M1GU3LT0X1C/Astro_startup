@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { supabase } from '../lib/supabase'; // ← ÚNICO IMPORT ADICIONADO
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,7 +21,6 @@ const guidelineBaseHeight = 800;
 const scale = (size:number) => (width / guidelineBaseWidth) * size;
 const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
-
 export default function Login() {
   const router = useRouter();
 
@@ -28,9 +28,8 @@ export default function Login() {
   const [senha, setSenha] = useState('');
   const [salvar, setSalvar] = useState(false);
 
-  // FUNÇÃO DE LOGIN (integração com backend)
+  // FUNÇÃO DE LOGIN - ALTERADA PRA USAR SUPABASE
   const handleLogin = async () => {
-
     // Validação simples
     if (!email || !senha) {
       alert('Preencha email e senha');
@@ -38,33 +37,21 @@ export default function Login() {
     }
 
     try {
-      // Requisição para o backend
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // tipo de envio
-        },
-        body: JSON.stringify({
-          email: email, 
-          senha: senha, 
-        }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: senha,
       });
 
-      // Converte resposta para JSON
-      const data = await response.json();
-
-      console.log('clicou no botão');
-
-      // Se deu certo (depois você melhora isso com banco)
-      if (data.msg === 'Funcionando!') {
-        alert('Bem-vindo ao Astro 🚀');
-        router.push('/homebase');
+      if (error) {
+        alert(error.message);
+        return;
       }
+
+      alert('Bem-vindo ao Astro 🚀');
+      router.push('/homebase');
 
     } catch (error) {
       console.log(error);
-
-      // Erro de conexão
       alert('Erro ao conectar com servidor');
     }
   };
@@ -212,11 +199,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFF',
-<<<<<<< HEAD
+
     fontSize: scale(18),
-=======
-    fontSize: 18,
->>>>>>> origin/meu_astrinho
+    
     fontWeight: 'bold',
     fontFamily: 'IstokWeb-Regular',
   },
