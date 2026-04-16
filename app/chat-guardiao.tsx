@@ -98,11 +98,18 @@ export default function ChatGuardiao() {
 
       {/* LISTA */}
       <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.messageItem}>
+                data={messages}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.messageItem}
+            onPress={() => {
+              if (item.name === 'Bianca') {
+                router.push('/chat-bianca');
+              }
+            }}
+          >
             <Image source={item.image} style={styles.avatar} />
 
             <View style={{ flex: 1 }}>

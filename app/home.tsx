@@ -1,4 +1,5 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -6,6 +7,7 @@ const guidelineBaseWidth = 360;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function Home() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
 
@@ -88,8 +90,11 @@ export default function Home() {
           <Image source={require('../assets/images/chat.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Image source={require('../assets/images/perfil.png')} style={styles.navIcon} />
+        <TouchableOpacity onPress={() => router.push('/perfil')}>
+          <Image
+            source={require('../assets/images/perfil.png')}
+            style={styles.navIcon}
+          />
         </TouchableOpacity>
       </View>
 

@@ -28,7 +28,12 @@ export default function HomeBase() {
       <View style={styles.postBox}>
         <Image source={require('../assets/images/pawpet.png')} style={styles.avatar} />
         <Text style={styles.postPlaceholder}>Poste algo...</Text>
-        <Image source={require('../assets/images/galeria.png')} style={styles.iconMedium} />
+        <TouchableOpacity onPress={() => router.push('/criar-astro')}>
+          <Image
+            source={require('../assets/images/galeria.png')}
+            style={styles.iconMedium}
+          />
+        </TouchableOpacity>
       </View>
 
       {/* FEED */}
@@ -93,8 +98,11 @@ export default function HomeBase() {
           <Image source={require('../assets/images/chat.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Image source={require('../assets/images/perfil.png')} style={styles.navIcon} />
+        <TouchableOpacity onPress={() => router.push('/perfil-base')}>
+          <Image
+            source={require('../assets/images/perfil.png')}
+            style={styles.navIcon}
+          />
         </TouchableOpacity>
       </View>
 

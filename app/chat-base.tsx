@@ -101,7 +101,14 @@ export default function ChatBase() {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.messageItem}>
+          <TouchableOpacity
+            style={styles.messageItem}
+            onPress={() => {
+              if (item.name === 'Marcelo') {
+                router.push('/chat-marcelo');
+              }
+            }}
+          >
             <Image source={item.image} style={styles.avatar} />
 
             <View style={{ flex: 1 }}>
