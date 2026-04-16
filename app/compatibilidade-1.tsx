@@ -1,5 +1,6 @@
-import { useRouter } from 'expo-router';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -11,6 +12,30 @@ const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function Compatibilidade1() {
   const router = useRouter();
+  const params = useLocalSearchParams(); // Pega os dados do Usuário
+  
+  // ADICIONEI: states pros novos campos
+  const [moraEm, setMoraEm] = useState('');
+  const [tempoCasa, setTempoCasa] = useState('');
+  const [tevePets, setTevePets] = useState('');
+
+  // ADICIONEI: função que valida e passa tudo pra frente
+  function avancar() {
+    if (!moraEm || !tempoCasa || !tevePets) {
+      Alert.alert('Erro', 'Responda todas as perguntas pra poder continuar.');
+      return;
+    }
+
+    router.push({
+      pathname: '/compatibilidade-2',
+      params: { 
+        ...params, // espalha tudo que veio: nome, email, senha, cpf, etc
+        mora_em: moraEm, 
+        tempo_casa: tempoCasa, 
+        teve_pets: tevePets 
+      }
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -39,29 +64,35 @@ export default function Compatibilidade1() {
         Sincere suas experiências. Estes dados ajudam a estação de apoio a confirmar se seu estilo e o destino ideal para o Astro que você quer adotar.
       </Text>
 
-      {/* INPUTS */}
+      {/* INPUTS - ADICIONEI: value e onChangeText */}
       <TextInput 
         placeholder="Você mora em:" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={moraEm}
+        onChangeText={setMoraEm}
       />
 
       <TextInput 
         placeholder="Quanto tempo você passa em casa?" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={tempoCasa}
+        onChangeText={setTempoCasa}
       />
 
       <TextInput 
         placeholder="Você tem/teve outros pets?" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={tevePets}
+        onChangeText={setTevePets}
       />
 
-      {/* BUTTON */}
+      {/* BUTTON - ALTEREI: agora chama avancar() */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push('/compatibilidade-2')}
+        onPress={avancar}
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
@@ -70,6 +101,7 @@ export default function Compatibilidade1() {
   );
 }
 
+// STYLES IGUAIS - NÃO MEXI
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -9,17 +9,16 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { supabase } from '../lib/supabase'; // ← ÚNICO IMPORT ADICIONADO
+import Toast from 'react-native-toast-message'; // ← ADICIONA ISSO
+import { supabase } from '../lib/supabase';
 
 const { width, height } = Dimensions.get('window');
 
-// BASE
 const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
 
-// SCALE
-const scale = (size:number) => (width / guidelineBaseWidth) * size;
-const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
+const scale = (size: number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size: number) => (height / guidelineBaseHeight) * size;
 
 export default function Login() {
   const router = useRouter();
@@ -28,11 +27,13 @@ export default function Login() {
   const [senha, setSenha] = useState('');
   const [salvar, setSalvar] = useState(false);
 
-  // FUNÇÃO DE LOGIN - ALTERADA PRA USAR SUPABASE
   const handleLogin = async () => {
-    // Validação simples
-    if (!email || !senha) {
-      alert('Preencha email e senha');
+    if (!email ||!senha) {
+      Toast.show({
+        type: 'error',
+        text1: 'Campos vazios',
+        text2: 'Preencher email e senha pra entrar.',
+      });
       return;
     }
 
@@ -43,16 +44,30 @@ export default function Login() {
       });
 
       if (error) {
-        alert(error.message);
+        Toast.show({
+          type: 'error',
+          text1: 'Erro no login',
+          text2: 'Email ou senha incorretos.',
+        });
         return;
       }
 
-      alert('Bem-vindo ao Astro 🚀');
-      router.push('/homebase');
+      Toast.show({
+        type: 'success',
+        text1: 'Bem-vindo ao Astro 🚀',
+        text2: 'Entrando...',
+        visibilityTime: 2000,
+      });
+
+      setTimeout(() => router.push('/homebase'), 1000);
 
     } catch (error) {
       console.log(error);
-      alert('Erro ao conectar com servidor');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro de conexão',
+        text2: 'Não foi possível conectar ao servidor',
+      });
     }
   };
 
@@ -95,7 +110,6 @@ export default function Login() {
         </Text>
       </View>
 
-      {/* BOTÃO ENTRAR */}
       <View style={styles.buttonWrapper}>
         <TouchableOpacity
           style={styles.button}
@@ -105,7 +119,6 @@ export default function Login() {
         </TouchableOpacity>
       </View>
 
-      {/* FOOTER */}
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => router.push('/escolher-tipo')}>
           <Text style={styles.footerText}>Cadastrar</Text>
@@ -133,7 +146,6 @@ const styles = StyleSheet.create({
     color: '#000000',
     marginBottom: scale(10),
     fontFamily: 'IstokWeb-Regular',
-
   },
   title: {
     fontSize: scale(50),
@@ -181,34 +193,32 @@ const styles = StyleSheet.create({
     fontSize: scale(15),
     fontFamily: 'IstokWeb-Regular',
   },
-    buttonWrapper: {
+  buttonWrapper: {
     borderWidth: 2,
     borderStyle: 'dashed',
     borderColor: '#8A38F5',
     padding: scale(20),
     borderRadius: scale(16),
     marginBottom: verticalScale(20),
-    alignSelf: 'center', 
+    alignSelf: 'center',
   },
   button: {
-  backgroundColor: '#0D0062',
-  paddingVertical: verticalScale(20),
-  paddingHorizontal: scale(105), 
-  borderRadius: scale(16),
-  alignItems: 'center',
+    backgroundColor: '#0D0062',
+    paddingVertical: verticalScale(20),
+    paddingHorizontal: scale(105),
+    borderRadius: scale(16),
+    alignItems: 'center',
   },
   buttonText: {
     color: '#FFF',
-
     fontSize: scale(18),
-    
     fontWeight: 'bold',
     fontFamily: 'IstokWeb-Regular',
   },
   footer: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: verticalScale(100), //
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: verticalScale(100),
   },
   footerText: {
     color: '#000000',

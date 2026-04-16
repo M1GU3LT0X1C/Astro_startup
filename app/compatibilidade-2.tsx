@@ -1,5 +1,6 @@
-import { useRouter } from 'expo-router';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -11,6 +12,30 @@ const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function Compatibilidade2() {
   const router = useRouter();
+  const params = useLocalSearchParams(); 
+  
+  const [temCriancas, setTemCriancas] = useState('');
+  const [qtdPessoas, setQtdPessoas] = useState('');
+  const [espacoDisp, setEspacoDisp] = useState('');
+  const [planoContencao, setPlanoContencao] = useState('');
+
+  function avancar() {
+    if (!temCriancas || !qtdPessoas || !espacoDisp || !planoContencao) {
+      Alert.alert('Erro', 'Responder todas as perguntas pra continuar.');
+      return;
+    }
+
+    router.push({
+      pathname: '/explorador-final',
+      params: { 
+        ...params, 
+        tem_criancas: temCriancas,
+        qtd_pessoas: qtdPessoas,
+        espaco_disp: espacoDisp,
+        plano_contencao: planoContencao
+      }
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -43,31 +68,40 @@ export default function Compatibilidade2() {
       <TextInput 
         placeholder="Há crianças em sua residência?" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={temCriancas}
+        onChangeText={setTemCriancas}
       />
 
       <TextInput 
         placeholder="Quantidade de pessoas na residência:" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={qtdPessoas}
+        onChangeText={setQtdPessoas}
+        keyboardType="numeric"
       />
 
       <TextInput 
-        placeholder="Espaço disponível na residência:" 
+        placeholder="Existe espaço disponível na residência?" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={espacoDisp}
+        onChangeText={setEspacoDisp}
       />
 
       <TextInput 
-        placeholder="Sua residência tem plano de contenção?" 
+        placeholder="Na residência tem plano de contenção?" 
         style={styles.input} 
-        placeholderTextColor="#777" 
+        placeholderTextColor="#777"
+        value={planoContencao}
+        onChangeText={setPlanoContencao}
       />
 
       {/* BUTTON */}
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.push('/explorador-final')}
+        onPress={avancar}
         >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>

@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -10,8 +11,73 @@ const guidelineBaseHeight = 800;
 // SCALE
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
+// ADICIONEI: máscara de CPF 000.000.000-00
+function maskCPF(value: string) {
+  return value
+   .replace(/\D/g, '')
+   .replace(/(\d{3})(\d)/, '$1.$2')
+   .replace(/(\d{3})(\d)/, '$1.$2')
+   .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+   .replace(/(-\d{2})\d+?$/, '$1');
+}
+
+// ADICIONEI: máscara de CEP 00000-000
+function maskCEP(value: string) {
+  return value
+   .replace(/\D/g, '')
+   .replace(/(\d{5})(\d)/, '$1-$2')
+   .replace(/(-\d{3})\d+?$/, '$1');
+}
+
+// ADICIONEI: validação de senha forte
+function validarSenha(senha: string) {
+  const tem8Chars = senha.length >= 8;
+  const temMaiuscula = /[A-Z]/.test(senha);
+  const temMinuscula = /[a-z]/.test(senha);
+  const temNumero = /[0-9]/.test(senha);
+  const temEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
+  return tem8Chars && temMaiuscula && temMinuscula && temNumero && temEspecial;
+}
+
 export default function CadastroExplorador() {
   const router = useRouter();
+
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [cep, setCep] = useState('');
+  const [numero, setNumero] = useState('');
+  const [cpf, setCpf] = useState('');
+
+  function avancar() {
+    if (!nome || !email || !senha || !cep || !numero || !cpf) {
+      Alert.alert('Erro', 'Preencher todos os campos pra continuar.');
+      return;
+    }
+    
+    if (!validarSenha(senha)) {
+      Alert.alert(
+        'Senha fraca', 
+        'Sua senha precisa ter:\n- Mínimo 8 caracteres\n- 1 letra maiúscula\n- 1 letra minúscula\n- 1 número\n- 1 caractere especial (!@#$...)'
+      );
+      return;
+    }
+
+    if (cpf.length < 14) {
+      Alert.alert('Erro', 'CPF incompleto.');
+      return;
+    }
+
+    if (cep.length < 9) {
+      Alert.alert('Erro', 'CEP incompleto.');
+      return;
+    }
+
+    router.push({
+      pathname: '/compatibilidade-1',
+      params: { nome, email, senha, cep, numero, cpf, tipo_usuario: 'explorador' }
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -22,7 +88,7 @@ export default function CadastroExplorador() {
         onPress={() => router.back()}
       >
         <Image
-          source={require('../assets/images/back.png')} // usa seu ícone aqui
+          source={require('../assets/images/back.png')}
           style={styles.backIcon}
         />
       </TouchableOpacity>
@@ -41,20 +107,65 @@ export default function CadastroExplorador() {
       </Text>
 
       {/* INPUTS */}
-      <TextInput placeholder="Nome" style={styles.input} placeholderTextColor="#777" />
-      <TextInput placeholder="E-mail" style={styles.input} placeholderTextColor="#777" />
+      <TextInput 
+        placeholder="Nome" 
+        style={styles.input} 
+        placeholderTextColor="#777"
+        value={nome} 
+        onChangeText={setNome} 
+      />
+      <TextInput 
+        placeholder="E-mail" 
+        style={styles.input} 
+        placeholderTextColor="#777"
+        value={email} 
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput 
+        placeholder="Senha" 
+        style={styles.input} 
+        placeholderTextColor="#777"
+        value={senha} 
+        onChangeText={setSenha}
+        secureTextEntry
+      />
 
       <View style={styles.row}>
-        <TextInput placeholder="CEP" style={[styles.input, styles.half]} placeholderTextColor="#777" />
-        <TextInput placeholder="Número" style={[styles.input, styles.half]} placeholderTextColor="#777" />
+        <TextInput 
+          placeholder="CEP" 
+          style={[styles.input, styles.half]} 
+          placeholderTextColor="#777"
+          value={cep} 
+          onChangeText={(text) => setCep(maskCEP(text))} 
+          keyboardType="numeric"
+          maxLength={9}
+        />
+        <TextInput 
+          placeholder="Número" 
+          style={[styles.input, styles.half]} 
+          placeholderTextColor="#777"
+          value={numero} 
+          onChangeText={setNumero}
+          keyboardType="numeric"
+        />
       </View>
 
-      <TextInput placeholder="CPF" style={styles.input} placeholderTextColor="#777" />
+      <TextInput 
+        placeholder="CPF" 
+        style={styles.input} 
+        placeholderTextColor="#777"
+        value={cpf} 
+        onChangeText={(text) => setCpf(maskCPF(text))}
+        keyboardType="numeric"
+        maxLength={14}
+      />
 
       {/* BUTTON */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push('/compatibilidade-1')}
+        onPress={avancar}
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
