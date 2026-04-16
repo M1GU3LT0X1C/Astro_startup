@@ -3,80 +3,58 @@ import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
+// BASE
 const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
 
+// SCALE
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
-const verticalScale = (size: number) => (height / guidelineBaseHeight) * size;
 
-export default function CadastroGuardiao() {
+export default function CadastroExplorador() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
 
-      {/* VOLTAR */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      {/* BACK */}
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => router.back()}
+      >
         <Image
-          source={require('../assets/images/back.png')}
+          source={require('../assets/images/back.png')} // usa seu ícone aqui
           style={styles.backIcon}
         />
       </TouchableOpacity>
 
+      {/* HEADER */}
       <Text style={styles.title}>
         Registrando perfil de navegação...
       </Text>
 
       <Text style={styles.subtitle}>
-        Dados de identificação
+        Dados pessoais
       </Text>
 
       <Text style={styles.description}>
-        Ative seu sinal: Informe seus dados de identificação e coordenadas para colocar os Astros sob sua guarda na órbita de novos exploradores.
+        Sincronize seus dados. Usamos sua localização apenas para mapear os Astros em seu órbito e facilitar o encontro no setor mais próximo.
       </Text>
 
       {/* INPUTS */}
-      <TextInput 
-        style={styles.input} 
-        placeholder="Nome"
-        placeholderTextColor="#888"
-      />
-
-      <TextInput 
-        style={styles.input} 
-        placeholder="E-mail"
-        placeholderTextColor="#888"
-      />
+      <TextInput placeholder="Nome" style={styles.input} placeholderTextColor="#777" />
+      <TextInput placeholder="E-mail" style={styles.input} placeholderTextColor="#777" />
 
       <View style={styles.row}>
-        <TextInput 
-          style={[styles.input, styles.half]} 
-          placeholder="CEP"
-          placeholderTextColor="#888"
-        />
-        <TextInput 
-          style={[styles.input, styles.half]} 
-          placeholder="Número"
-          placeholderTextColor="#888"
-        />
+        <TextInput placeholder="CEP" style={[styles.input, styles.half]} placeholderTextColor="#777" />
+        <TextInput placeholder="Número" style={[styles.input, styles.half]} placeholderTextColor="#777" />
       </View>
 
-      <TextInput 
-        style={styles.input} 
-        placeholder="CPF"
-        placeholderTextColor="#888"
-      />
+      <TextInput placeholder="CPF" style={styles.input} placeholderTextColor="#777" />
 
-      <TextInput 
-        style={styles.input} 
-        placeholder="Rede social"
-        placeholderTextColor="#888"
-      />
-
-      {/* BOTÃO */}
-      <TouchableOpacity 
+      {/* BUTTON */}
+      <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push('/guardiao-final')}
+        onPress={() => router.push('/compatibilidade-1')}
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
@@ -113,7 +91,7 @@ const styles = StyleSheet.create({
   },
 
   subtitle: {
-    fontSize: scale(18),
+    fontSize: scale(20),
     marginBottom: scale(5),
     fontFamily: 'IstokWeb-Regular',
   },
@@ -126,13 +104,11 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#D9D9D9',
     padding: scale(15),
-    borderRadius: scale(18),
+    borderRadius: scale(15),
     marginBottom: scale(15),
     fontFamily: 'IstokWeb-Regular',
-    borderWidth: 1,
-    borderColor: '#CFCFCF',
   },
 
   row: {
@@ -147,7 +123,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#0D0062',
     padding: scale(15),
-    borderRadius: scale(20),
+    borderRadius: scale(15),
     alignItems: 'center',
     marginTop: scale(30),
   },

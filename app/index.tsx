@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: '#FFFCFD',
-    fontWeight: 'bold',
     fontSize: scale(18),
     fontFamily: 'IstokWeb-Regular',
   },

@@ -8,7 +8,7 @@ const guidelineBaseHeight = 800;
 
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
-export default function BaseFinal() {
+export default function GuardiaoFinal() {
   const router = useRouter();
 
   return (
@@ -27,13 +27,13 @@ export default function BaseFinal() {
       </Text>
 
       <Text style={styles.description}>
-        Conte sobre o propósito das suas missões e adicione uma foto da sua equipe, logo para que sua base seja reconhecida na galáxia.
+        Conte sobre sua atuação como guardião e adicione uma foto ou identificação para que você seja reconhecido na rede de proteção.
       </Text>
 
       {/* IMAGEM */}
       <View style={styles.imageContainer}>
         <Image
-          source={require('../assets/images/camera.png')} // ícone de câmera
+          source={require('../assets/images/camera.png')}
           style={styles.cameraIcon}
         />
       </View>
@@ -41,7 +41,7 @@ export default function BaseFinal() {
       {/* TEXTO */}
       <TextInput
         style={styles.textArea}
-        placeholder="Fale sobre a ONG"
+        placeholder="Fale sobre você"
         placeholderTextColor="#888"
         multiline
       />
@@ -49,8 +49,8 @@ export default function BaseFinal() {
       {/* BOTÃO */}
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.replace('/homebase')}
-      >
+        onPress={() => router.replace('/homeguard')}
+        >
         <Text style={styles.buttonText}>Finalizar</Text>
       </TouchableOpacity>
 

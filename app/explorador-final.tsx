@@ -1,14 +1,13 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const guidelineBaseWidth = 360;
-const guidelineBaseHeight = 800;
 
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
-export default function BaseFinal() {
+export default function ExploradorFinal() {
   const router = useRouter();
 
   return (
@@ -27,13 +26,13 @@ export default function BaseFinal() {
       </Text>
 
       <Text style={styles.description}>
-        Conte sobre o propósito das suas missões e adicione uma foto da sua equipe, logo para que sua base seja reconhecida na galáxia.
+        Conte um pouco sobre sua rotina e seu estilo de vida. Essas informações ajudam a encontrar o Astro mais compatível com você.
       </Text>
 
       {/* IMAGEM */}
       <View style={styles.imageContainer}>
         <Image
-          source={require('../assets/images/camera.png')} // ícone de câmera
+          source={require('../assets/images/camera.png')}
           style={styles.cameraIcon}
         />
       </View>
@@ -41,7 +40,7 @@ export default function BaseFinal() {
       {/* TEXTO */}
       <TextInput
         style={styles.textArea}
-        placeholder="Fale sobre a ONG"
+        placeholder="Fale sobre você"
         placeholderTextColor="#888"
         multiline
       />
@@ -49,8 +48,8 @@ export default function BaseFinal() {
       {/* BOTÃO */}
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.replace('/homebase')}
-      >
+        onPress={() => router.push('/home')}
+        >
         <Text style={styles.buttonText}>Finalizar</Text>
       </TouchableOpacity>
 

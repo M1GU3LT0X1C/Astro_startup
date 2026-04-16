@@ -20,7 +20,10 @@ export default function EscolherTipo() {
       <Text style={styles.title}>O que você faz aqui?</Text>
 
       {/* EXPLORADOR */}
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity 
+          style={styles.card}
+          onPress={() => router.push('/cadastro-explorador')}
+        >
         <Image
           source={require('../assets/images/explorador.png')}
           style={styles.icon}
