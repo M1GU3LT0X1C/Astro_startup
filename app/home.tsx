@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -6,6 +7,8 @@ const guidelineBaseWidth = 360;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
 
@@ -80,7 +83,10 @@ export default function Home() {
           <Image source={require('../assets/images/pata.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={() => router.push('/novo-post')}
+        >
           <Image source={require('../assets/images/add.png')} style={styles.addIcon} />
         </TouchableOpacity>
 
