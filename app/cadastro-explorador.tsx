@@ -1,42 +1,30 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
-
-// BASE
 const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
-
-// SCALE
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
-// ADICIONEI: máscara de CPF 000.000.000-00
+// Máscara de CPF 000.000.000-00
 function maskCPF(value: string) {
   return value
-   .replace(/\D/g, '')
-   .replace(/(\d{3})(\d)/, '$1.$2')
-   .replace(/(\d{3})(\d)/, '$1.$2')
-   .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-   .replace(/(-\d{2})\d+?$/, '$1');
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1');
 }
 
-// ADICIONEI: máscara de CEP 00000-000
+// Máscara de CEP 00000-000
 function maskCEP(value: string) {
   return value
-   .replace(/\D/g, '')
-   .replace(/(\d{5})(\d)/, '$1-$2')
-   .replace(/(-\d{3})\d+?$/, '$1');
-}
-
-// ADICIONEI: validação de senha forte
-function validarSenha(senha: string) {
-  const tem8Chars = senha.length >= 8;
-  const temMaiuscula = /[A-Z]/.test(senha);
-  const temMinuscula = /[a-z]/.test(senha);
-  const temNumero = /[0-9]/.test(senha);
-  const temEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
-  return tem8Chars && temMaiuscula && temMinuscula && temNumero && temEspecial;
+    .replace(/\D/g, '')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .replace(/(-\d{3})\d+?$/, '$1');
 }
 
 export default function CadastroExplorador() {
@@ -45,44 +33,108 @@ export default function CadastroExplorador() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState(''); // ← ADICIONEI
   const [cep, setCep] = useState('');
   const [numero, setNumero] = useState('');
   const [cpf, setCpf] = useState('');
+  
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
 
   function avancar() {
-    if (!nome || !email || !senha || !cep || !numero || !cpf) {
-      Alert.alert('Erro', 'Preencher todos os campos pra continuar.');
-      return;
-    }
-    
-    if (!validarSenha(senha)) {
-      Alert.alert(
-        'Senha fraca', 
-        'Sua senha precisa ter:\n- Mínimo 8 caracteres\n- 1 letra maiúscula\n- 1 letra minúscula\n- 1 número\n- 1 caractere especial (!@#$...)'
-      );
+    if (!nome.trim() || !email.trim() || !senha.trim() || !confirmarSenha.trim() || !cep.trim() || !numero.trim() || !cpf.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Campos obrigatórios',
+        text2: 'Preencha todos os campos.',
+        visibilityTime: 3000,
+      });
       return;
     }
 
-    if (cpf.length < 14) {
-      Alert.alert('Erro', 'CPF incompleto.');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      Toast.show({
+        type: 'error',
+        text1: 'E-mail inválido',
+        text2: 'Digite um e-mail válido',
+        visibilityTime: 3000,
+      });
+      return;
+    }
+
+    const senhaForteRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    
+    if (!senhaForteRegex.test(senha)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Senha inválida',
+        text2: 'Use 8+ caracteres com A-Z, a-z, 0-9 e símbolo',
+        visibilityTime: 5000,
+      });
+      return;
+    }
+
+    if (senha !== confirmarSenha) {
+      Toast.show({
+        type: 'error',
+        text1: 'Senhas diferentes',
+        text2: 'As senhas não coincidem',
+        visibilityTime: 3000,
+      });
       return;
     }
 
     if (cep.length < 9) {
-      Alert.alert('Erro', 'CEP incompleto.');
+      Toast.show({
+        type: 'error',
+        text1: 'CEP incompleto',
+        text2: 'Verifique o número do CEP',
+        visibilityTime: 3000,
+      });
       return;
     }
 
-    router.push({
-      pathname: '/compatibilidade-1',
-      params: { nome, email, senha, cep, numero, cpf, tipo_usuario: 'explorador' }
+    if (cpf.replace(/\D/g, '').length < 11) {
+      Toast.show({
+        type: 'error',
+        text1: 'CPF incompleto',
+        text2: 'CPF precisa ter 11 dígitos',
+        visibilityTime: 3000,
+      });
+      return;
+    }
+
+    Toast.show({
+      type: 'success',
+      text1: 'Explorador registrado!',
+      text2: 'Vamos descobrir sua compatibilidade 🌌',
+      visibilityTime: 2000,
     });
+
+    setTimeout(() => {
+      router.push({
+        pathname: '/compatibilidade-1',
+        params: { 
+          nome, 
+          email, 
+          senha, 
+          cep, 
+          numero, 
+          cpf: cpf.replace(/\D/g, ''), 
+          tipo_usuario: 'explorador' 
+        }
+      });
+    }, 1000);
   }
 
   return (
-    <View style={styles.container}>
-
-      {/* BACK */}
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => router.back()}
@@ -93,7 +145,6 @@ export default function CadastroExplorador() {
         />
       </TouchableOpacity>
 
-      {/* HEADER */}
       <Text style={styles.title}>
         Registrando perfil de navegação...
       </Text>
@@ -106,7 +157,6 @@ export default function CadastroExplorador() {
         Sincronize seus dados. Usamos sua localização apenas para mapear os Astros em seu órbito e facilitar o encontro no setor mais próximo.
       </Text>
 
-      {/* INPUTS */}
       <TextInput 
         placeholder="Nome" 
         style={styles.input} 
@@ -123,14 +173,48 @@ export default function CadastroExplorador() {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <TextInput 
-        placeholder="Senha" 
-        style={styles.input} 
-        placeholderTextColor="#777"
-        value={senha} 
-        onChangeText={setSenha}
-        secureTextEntry
-      />
+      
+      <View style={styles.inputContainer}>
+        <TextInput 
+          placeholder="Senha" 
+          style={styles.inputSenha} 
+          placeholderTextColor="#777"
+          value={senha} 
+          onChangeText={setSenha}
+          secureTextEntry={!mostrarSenha}
+        />
+        <TouchableOpacity 
+          style={styles.eyeIcon} 
+          onPress={() => setMostrarSenha(!mostrarSenha)}
+        >
+          <Ionicons 
+            name={mostrarSenha ? "eye-off" : "eye"} 
+            size={scale(20)} 
+            color="#777" 
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <TextInput 
+          placeholder="Confirmar senha" 
+          style={styles.inputSenha} 
+          placeholderTextColor="#777"
+          value={confirmarSenha} 
+          onChangeText={setConfirmarSenha}
+          secureTextEntry={!mostrarConfirmarSenha}
+        />
+        <TouchableOpacity 
+          style={styles.eyeIcon} 
+          onPress={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
+        >
+          <Ionicons 
+            name={mostrarConfirmarSenha ? "eye-off" : "eye"} 
+            size={scale(20)} 
+            color="#777" 
+          />
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.row}>
         <TextInput 
@@ -162,15 +246,13 @@ export default function CadastroExplorador() {
         maxLength={14}
       />
 
-      {/* BUTTON */}
       <TouchableOpacity
         style={styles.button}
         onPress={avancar}
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
-
-    </View>
+    </ScrollView>
   );
 }
 
@@ -178,9 +260,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFCFD',
-    padding: scale(20),
   },
-
+  contentContainer: {
+    padding: scale(20),
+    paddingBottom: scale(40),
+  },
   backButton: {
     width: scale(50),
     height: scale(50),
@@ -188,49 +272,64 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: scale(20),
   },
-
   backIcon: {
     width: scale(30),
     height: scale(30),
     resizeMode: 'contain',
   },
-
   title: {
     fontSize: scale(30),
     marginBottom: scale(20),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A'
   },
-
   subtitle: {
     fontSize: scale(20),
     marginBottom: scale(5),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A'
   },
-
   description: {
     fontSize: scale(12),
     color: '#555',
     marginBottom: scale(20),
     fontFamily: 'IstokWeb-Regular',
   },
-
   input: {
     backgroundColor: '#D9D9D9',
     padding: scale(15),
     borderRadius: scale(15),
     marginBottom: scale(15),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A',
+    fontSize: scale(14),
   },
-
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+    borderRadius: scale(15),
+    marginBottom: scale(15),
+    height: scale(50),
+  },
+  inputSenha: {
+    flex: 1,
+    paddingHorizontal: scale(15),
+    paddingVertical: scale(15),
+    fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A',
+    fontSize: scale(14),
+  },
+  eyeIcon: {
+    padding: scale(15),
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-
   half: {
     width: '48%',
   },
-
   button: {
     backgroundColor: '#0D0062',
     padding: scale(15),
@@ -238,7 +337,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: scale(30),
   },
-
   buttonText: {
     color: '#fff',
     fontSize: scale(16),
