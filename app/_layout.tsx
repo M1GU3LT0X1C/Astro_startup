@@ -11,7 +11,7 @@ const toastConfig: ToastConfig = {
       {...props}
       style={{
         borderLeftColor: '#0D0062',
-        backgroundColor: '#1A1A1A',
+        backgroundColor: '#ffffff',
         borderRadius: 20,
         marginTop: 10,
       }}
