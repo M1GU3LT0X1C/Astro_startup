@@ -1,16 +1,22 @@
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Switch,
 } from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
+import Toast from 'react-native-toast-message';
+import { supabase } from '../lib/supabase';
+import { useAppAlerts } from '../utils/alert';
 
 const { width } = Dimensions.get('window');
 
@@ -18,6 +24,20 @@ const guidelineBaseWidth = 360;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function CriarAstro() {
+  const router = useRouter();
+  const { mostrarOpcoesFoto } = useAppAlerts();
+
+  // Estados dos campos
+  const [imagem, setImagem] = useState<string | null>(null);
+  const [nome, setNome] = useState('');
+  const [idade, setIdade] = useState('');
+  const [raca, setRaca] = useState('');
+  const [descricao, setDescricao] = useState('');
+
+  const [porte, setPorte] = useState('');
+  const [sexo, setSexo] = useState('');
+  const [especie, setEspecie] = useState('');
+
   const [castrado, setCastrado] = useState(false);
   const [vacinado, setVacinado] = useState(false);
   const [vermifugado, setVermifugado] = useState(false);
@@ -30,17 +50,7 @@ export default function CriarAstro() {
   const [sexoOpen, setSexoOpen] = useState(false);
   const [especieOpen, setEspecieOpen] = useState(false);
 
-  const [porte, setPorte] = useState('');
-  const [sexo, setSexo] = useState('');
-  const [especie, setEspecie] = useState('');
-
-  const togglePersonalidade = (item: string) => {
-    if (personalidade.includes(item)) {
-      setPersonalidade(personalidade.filter(p => p !== item));
-    } else {
-      setPersonalidade([...personalidade, item]);
-    }
-  };
+  const [loading, setLoading] = useState(false);
 
   const personalidadeLista = [
     { nome: 'Afetivo', icon: require('../assets/images/afetivo.png') },
@@ -54,29 +64,177 @@ export default function CriarAstro() {
     { nome: 'Medroso', icon: require('../assets/images/medroso.png') },
     { nome: 'Protetor', icon: require('../assets/images/protetor.png') },
   ];
-  
-  const router = useRouter();
+
+  const togglePersonalidade = (item: string) => {
+    if (personalidade.includes(item)) {
+      setPersonalidade(personalidade.filter(p => p!== item));
+    } else {
+      setPersonalidade([...personalidade, item]);
+    }
+  };
+
+  async function abrirCamera() {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status!== 'granted') {
+      Toast.show({ type: 'error', text1: 'Permissão negada', text2: 'Precisamos de acesso à câmera' });
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled) setImagem(result.assets[0].uri);
+  }
+
+  async function abrirGaleria() {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled) setImagem(result.assets[0].uri);
+  }
+
+  async function escolherImagem() {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status!== 'granted') {
+      Toast.show({ type: 'error', text1: 'Permissão negada', text2: 'Precisamos de acesso à galeria' });
+      return;
+    }
+    mostrarOpcoesFoto(abrirCamera, abrirGaleria);
+  }
+
+  const handlePublicar = async () => {
+    if (!nome.trim()) {
+      Toast.show({ type: 'error', text1: 'Faltou o nome', text2: 'Dá um nome pro Astro' });
+      return;
+    }
+    if (!imagem) {
+      Toast.show({ type: 'error', text1: 'Faltou a foto', text2: 'Adiciona uma imagem do Astro' });
+      return;
+    }
+    if (!porte ||!sexo ||!especie) {
+      Toast.show({ type: 'error', text1: 'Campos obrigatórios', text2: 'Preenche porte, sexo e espécie' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Sessão expirada. Faça login novamente.');
+
+      // Upload da imagem
+      const fileExt = imagem.split('.').pop();
+      const fileName = `${user.id}/astros/${Date.now()}.${fileExt}`;
+
+      const response = await fetch(imagem);
+      const blob = await response.blob();
+      const arrayBuffer = await new Response(blob).arrayBuffer();
+
+      const { error: uploadError } = await supabase.storage
+    .from('astros')
+    .upload(fileName, arrayBuffer, {
+          contentType: `image/${fileExt}`,
+          upsert: true,
+        });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage.from('astros').getPublicUrl(fileName);
+      const imageUrl = urlData.publicUrl;
+
+      // Mapeia espécie pra 'cat' ou 'dog'
+      const especieMap: Record<string, string> = {
+        'Cachorro': 'dog',
+        'Gato': 'cat'
+      };
+
+      // Insere no banco
+      const { data: insertedData, error: dbError } = await supabase.from('astros').insert({
+        nome: nome,
+        idade: idade || null,
+        raca: raca || null,
+        porte: porte,
+        sexo: sexo,
+        especie: especieMap[especie],
+        castrado: castrado,
+        vacinado: vacinado,
+        vermifugado: vermifugado,
+        pedigree: pedigree,
+        cuidados_especiais: cuidados,
+        personalidade: personalidade.length > 0? personalidade : null,
+        descricao: descricao || null,
+        imagem_url: imageUrl,
+        user_id: user.id,
+        disponivel: true
+      }).select().single();
+
+      if (dbError) throw dbError;
+
+      Toast.show({
+        type: 'success',
+        text1: 'Astro publicado! 🚀',
+        text2: 'Bora pro swap',
+      });
+
+      setTimeout(() => {
+        router.replace('/match');
+      }, 1000);
+
+    } catch (error: any) {
+      console.log('ERRO:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao publicar',
+        text2: error.message || 'Não foi possível criar o Astro',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Image source={require('../assets/images/back.png')} style={styles.backIcon} />
+          <Ionicons name="arrow-back" size={scale(30)} color="#000" />
         </TouchableOpacity>
 
         <View style={styles.card}>
 
-          <TouchableOpacity style={styles.imageBox}>
-            <Image source={require('../assets/images/camera.png')} style={styles.cameraIcon} />
-            <Text style={styles.addImageText}>Adicionar imagem</Text>
+          <TouchableOpacity style={styles.imageBox} onPress={escolherImagem}>
+            {imagem? (
+              <Image source={{ uri: imagem }} style={styles.previewImage} />
+            ) : (
+              <>
+                <Image source={require('../assets/images/camera.png')} style={styles.cameraIcon} />
+                <Text style={styles.addImageText}>Adicionar imagem</Text>
+              </>
+            )}
           </TouchableOpacity>
 
-          <TextInput placeholder="Nome do Astro" style={styles.inputHighlight} />
-          <TextInput placeholder="Idade do Astro" style={styles.inputHighlight} />
-          <TextInput placeholder="Raça do Astro" style={styles.inputHighlight} />
+          <TextInput
+            placeholder="Nome do Astro"
+            style={styles.inputHighlight}
+            value={nome}
+            onChangeText={setNome}
+          />
+          <TextInput
+            placeholder="Idade do Astro"
+            style={styles.inputHighlight}
+            value={idade}
+            onChangeText={setIdade}
+            keyboardType="numeric"
+          />
+          <TextInput
+            placeholder="Raça do Astro"
+            style={styles.inputHighlight}
+            value={raca}
+            onChangeText={setRaca}
+          />
 
-          {/* 🔥 SELECTS */}
           <View style={styles.box}>
 
             {/* PORTE */}
@@ -86,7 +244,12 @@ export default function CriarAstro() {
               onPress={() => setPorteOpen(!porteOpen)}
             >
               <Text style={styles.selectText}>{porte || 'Porte'}</Text>
-              <Image source={require('../assets/images/seta.png')} style={styles.arrow} />
+              <Ionicons
+                name="chevron-forward"
+                size={scale(20)}
+                color="#A0A0A0"
+                style={[styles.seta, porteOpen && styles.setaRotacionada]}
+              />
             </TouchableOpacity>
 
             {porteOpen && (
@@ -100,7 +263,7 @@ export default function CriarAstro() {
                       setPorteOpen(false);
                     }}
                   >
-                    <Text>{item}</Text>
+                    <Text style={styles.dropdownText}>{item}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -115,12 +278,17 @@ export default function CriarAstro() {
               onPress={() => setSexoOpen(!sexoOpen)}
             >
               <Text style={styles.selectText}>{sexo || 'Sexo'}</Text>
-              <Image source={require('../assets/images/seta.png')} style={styles.arrow} />
+              <Ionicons
+                name="chevron-forward"
+                size={scale(20)}
+                color="#A0A0A0"
+                style={[styles.seta, sexoOpen && styles.setaRotacionada]}
+              />
             </TouchableOpacity>
 
             {sexoOpen && (
               <View style={styles.dropdown}>
-                {['Masculino', 'Feminino'].map(item => (
+                {['Macho', 'Fêmea'].map(item => (
                   <TouchableOpacity
                     key={item}
                     style={styles.dropdownItem}
@@ -129,7 +297,7 @@ export default function CriarAstro() {
                       setSexoOpen(false);
                     }}
                   >
-                    <Text>{item}</Text>
+                    <Text style={styles.dropdownText}>{item}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -144,7 +312,12 @@ export default function CriarAstro() {
               onPress={() => setEspecieOpen(!especieOpen)}
             >
               <Text style={styles.selectText}>{especie || 'Espécie'}</Text>
-              <Image source={require('../assets/images/seta.png')} style={styles.arrow} />
+              <Ionicons
+                name="chevron-forward"
+                size={scale(20)}
+                color="#A0A0A0"
+                style={[styles.seta, especieOpen && styles.setaRotacionada]}
+              />
             </TouchableOpacity>
 
             {especieOpen && (
@@ -158,7 +331,7 @@ export default function CriarAstro() {
                       setEspecieOpen(false);
                     }}
                   >
-                    <Text>{item}</Text>
+                    <Text style={styles.dropdownText}>{item}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -179,11 +352,11 @@ export default function CriarAstro() {
                 key={label}
                 style={[
                   styles.rowBetween,
-                  index !== 4 && styles.divider
+                  index!== 4 && styles.divider
                 ]}
               >
                 <Text style={styles.switchText}>{label}</Text>
-                <Switch value={value} onValueChange={setValue} />
+                <Switch value={value} onValueChange={setValue} trackColor={{ true: '#0D0062' }} />
               </View>
             ))}
           </View>
@@ -193,7 +366,6 @@ export default function CriarAstro() {
           <View style={styles.personalityGrid}>
             {personalidadeLista.map(item => {
               const active = personalidade.includes(item.nome);
-
               return (
                 <TouchableOpacity
                   key={item.nome}
@@ -213,12 +385,22 @@ export default function CriarAstro() {
             placeholder="Conte sobre o Astro..."
             style={styles.textArea}
             multiline
+            value={descricao}
+            onChangeText={setDescricao}
           />
 
         </View>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Publicar</Text>
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handlePublicar}
+          disabled={loading}
+        >
+          {loading? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Publicar</Text>
+          )}
         </TouchableOpacity>
 
       </ScrollView>
@@ -238,11 +420,6 @@ const styles = StyleSheet.create({
     marginBottom: scale(10),
   },
 
-  backIcon: {
-    width: scale(30),
-    height: scale(30),
-  },
-
   card: {
     backgroundColor: '#FFF',
     marginHorizontal: scale(15),
@@ -258,6 +435,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: scale(15),
+    overflow: 'hidden',
+  },
+
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
 
   cameraIcon: {
@@ -276,6 +460,7 @@ const styles = StyleSheet.create({
     padding: scale(14),
     marginBottom: scale(12),
     elevation: 3,
+    fontSize: scale(14),
   },
 
   box: {
@@ -313,13 +498,20 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEE',
   },
 
+  dropdownText: {
+    fontSize: scale(13),
+  },
+
   selectText: {
     fontSize: scale(13),
   },
 
-  arrow: {
-    width: scale(10),
-    height: scale(10),
+  seta: {
+    transform: [{ rotate: '0deg' }],
+  },
+
+  setaRotacionada: {
+    transform: [{ rotate: '90deg' }],
   },
 
   switchText: {
@@ -376,6 +568,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     marginTop: scale(10),
     elevation: 3,
+    fontSize: scale(14),
   },
 
   button: {
@@ -384,6 +577,10 @@ const styles = StyleSheet.create({
     padding: scale(15),
     borderRadius: scale(25),
     alignItems: 'center',
+  },
+
+  buttonDisabled: {
+    opacity: 0.6,
   },
 
   buttonText: {

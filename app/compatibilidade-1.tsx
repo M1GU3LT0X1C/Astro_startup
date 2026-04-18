@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get('window');
@@ -26,7 +26,7 @@ export default function Compatibilidade1() {
     }
 
     router.push({
-      pathname: '/compatibilidade-2',
+      pathname: '/finalizar-cadastro',
       params: { 
         ...params,
         mora_em: moraEm, 
@@ -37,7 +37,11 @@ export default function Compatibilidade1() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="handled"
+    >
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => router.back()}
@@ -90,7 +94,7 @@ export default function Compatibilidade1() {
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -98,7 +102,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFCFD',
+  },
+  contentContainer: {
     padding: scale(20),
+    paddingBottom: scale(40),
   },
   backButton: {
     width: scale(60),
@@ -144,7 +151,7 @@ const styles = StyleSheet.create({
     padding: scale(15),
     borderRadius: scale(15),
     alignItems: 'center',
-    marginTop: scale(150),
+    marginTop: scale(20),
   },
   buttonText: {
     color: '#fff',

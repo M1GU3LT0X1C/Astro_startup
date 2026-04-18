@@ -49,10 +49,10 @@ export default function Compatibilidade2() {
 
       const userId = authData.user.id;
 
-      // 2. Insere na tabela usuarios
-      const { error: dbError } = await supabase.from('usuarios').insert({
+      // 2. Insere na tabela PROFILES - CORRIGIDO
+      const { error: dbError } = await supabase.from('profiles').insert({
         id: userId,
-        nome: params.nome as string,
+        nome_completo: params.nome as string,
         email: params.email as string,
         cpf: params.cpf as string,
         cep: params.cep as string,
@@ -64,7 +64,8 @@ export default function Compatibilidade2() {
         qtd_pessoas: qtdPessoas,
         espaco_disp: espacoDisp,
         plano_contencao: planoContencao,
-        tipo_usuario: 'guardiao',
+        tipo_usuario: 'guardião', // COM ACENTO
+        avatar_url: null,
       });
 
       if (dbError) throw dbError;
@@ -77,7 +78,7 @@ export default function Compatibilidade2() {
       });
 
       setTimeout(() => {
-        router.replace('/homeguard'); 
+        router.replace('/home' as any); // CORRIGIDO - era /homeguard
       }, 1500);
 
     } catch (error: any) {

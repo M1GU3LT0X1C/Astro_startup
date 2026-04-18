@@ -4,12 +4,10 @@ import { useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 360;
-const guidelineBaseHeight = 800;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
-// Máscara de CPF 000.000.000-00
 function maskCPF(value: string) {
   return value
     .replace(/\D/g, '')
@@ -19,7 +17,6 @@ function maskCPF(value: string) {
     .replace(/(-\d{2})\d+?$/, '$1');
 }
 
-// Máscara de CEP 00000-000
 function maskCEP(value: string) {
   return value
     .replace(/\D/g, '')
@@ -122,7 +119,7 @@ export default function CadastroGuardiao() {
           cep, 
           numero, 
           cpf: cpf.replace(/\D/g, ''), 
-          tipo_usuario: 'guardiao' // ← ÚNICA DIFERENÇA
+          tipo_usuario: 'guardiao'
         }
       });
     }, 1000);

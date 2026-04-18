@@ -54,35 +54,24 @@ export default function Login() {
         return;
       }
 
-      // PEGA O TIPO DE USUÁRIO
       const { data: userData } = await supabase
-        .from('usuarios')
-        .select('tipo_usuario, nome')
-        .eq('id', data.user.id)
-        .single();
+    .from('profiles')
+    .select('tipo_usuario, nome_completo')
+    .eq('id', data.user.id)
+    .single();
 
       Toast.show({
         type: 'success',
-        text1: `Bem-vindo, ${userData?.nome || 'Astro'} 🚀`,
+        text1: `Bem-vindo, ${userData?.nome_completo || 'Astro'} 🚀`,
         text2: 'Entrando...',
-        visibilityTime: 2000,
+        visibilityTime: 1000,
       });
 
-      // REDIRECIONA PELA HOME CORRETA
-      setTimeout(() => {
-        switch (userData?.tipo_usuario) {
-          case 'guardiao':
-            router.replace('/homeguard'); // Guardião de Órbita
-            break;
-          case 'base':
-            router.replace('/homebase'); // Base Estelar
-            break;
-          case 'explorador':
-          default:
-            router.replace('/home'); // Explorador
-            break;
-        }
-      }, 1000);
+      router.dismissAll();
+      
+      // CORRIGIDO: sempre manda pra /home
+      // O home.tsx já diferencia o tipo_usuario
+      router.replace('/home' as any);
 
     } catch (error) {
       console.log(error);
@@ -113,7 +102,6 @@ export default function Login() {
         keyboardType="email-address"
       />
 
-      {/* INPUT DE SENHA COM OLHINHO */}
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
@@ -128,7 +116,7 @@ export default function Login() {
           style={styles.eyeIcon}
         >
           <Ionicons 
-            name={mostrarSenha ? 'eye-off' : 'eye'} 
+            name={mostrarSenha? 'eye-off' : 'eye'} 
             size={scale(22)} 
             color="#777" 
           />
@@ -158,11 +146,11 @@ export default function Login() {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => router.push('/escolher-tipo')}>
+        <TouchableOpacity onPress={() => router.push('/escolher-tipo' as any)}>
           <Text style={styles.footerText}>Cadastrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/recuperar-senha')}>
+        <TouchableOpacity onPress={() => router.push('/recuperar-senha' as any)}>
           <Text style={styles.footerText}>Esqueci a senha</Text>
         </TouchableOpacity>
       </View>

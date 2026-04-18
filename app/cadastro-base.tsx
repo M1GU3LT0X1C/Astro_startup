@@ -4,12 +4,10 @@ import { useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 360;
-const guidelineBaseHeight = 800;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
-// Máscara de CNPJ 00.000.000/0000-00
 function maskCNPJ(value: string) {
   return value
     .replace(/\D/g, '')
@@ -20,7 +18,6 @@ function maskCNPJ(value: string) {
     .replace(/(-\d{2})\d+?$/, '$1');
 }
 
-// Máscara de CEP 00000-000
 function maskCEP(value: string) {
   return value
     .replace(/\D/g, '')
@@ -116,7 +113,7 @@ export default function CadastroBase() {
 
     setTimeout(() => {
       router.push({
-        pathname: '/base-final',
+        pathname: '/finalizar-cadastro',
         params: { 
           nome, 
           email, 
@@ -125,7 +122,7 @@ export default function CadastroBase() {
           numero, 
           cnpj: cnpj.replace(/\D/g, ''), 
           rede,
-          tipo_usuario: 'base_estelar' 
+          tipo_usuario: 'estacao_apoio'
         }
       });
     }, 1000);

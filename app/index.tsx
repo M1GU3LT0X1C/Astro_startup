@@ -1,19 +1,46 @@
 import { useRouter } from 'expo-router';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { supabase } from '../lib/supabase';
 
 const { width, height } = Dimensions.get('window');
-
-// BASE
 const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
 
-// SCALE
-const scale = (size:number) => (width / guidelineBaseWidth) * size;
-const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
+const scale = (size: number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size: number) => (height / guidelineBaseHeight) * size;
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-  const router = useRouter(); 
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      // Já tá logado, manda pra home
+      router.replace('/home' as any);
+    } else {
+      // Não tá logado, mostra a tela
+      setLoading(false);
+    }
+  }
+
+  function handleStart() {
+    router.push('/login' as any);
+  }
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#0D0062" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -43,7 +70,7 @@ export default function HomeScreen() {
       {/* Botão */}
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.push('/login')}
+        onPress={handleStart}
       >
         <Text style={styles.buttonText}>Mapear órbita</Text>
       </TouchableOpacity>
@@ -58,7 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFCFD',
     padding: scale(20),
   },
-
   textContainer: {
     width: scale(185),
     height: verticalScale(118),
@@ -66,19 +92,16 @@ const styles = StyleSheet.create({
     top: verticalScale(167),
     left: scale(42),
   },
-
   title: {
     fontSize: scale(50),
     fontFamily: 'ComicNeue-Bold',
   },
-
   subtitle: {
     fontSize: scale(20),
     marginTop: verticalScale(5),
     fontFamily: 'IstokWeb-Regular',
     color: '#000000',
   },
-
   mainImage: {
     width: scale(600),
     height: verticalScale(400),
@@ -86,7 +109,6 @@ const styles = StyleSheet.create({
     right: scale(-290),
     top: verticalScale(120),
   },
-
   Imagedog: {
     width: scale(700),
     height: verticalScale(400),
@@ -94,7 +116,6 @@ const styles = StyleSheet.create({
     left: scale(-150),
     top: verticalScale(290),
   },
-
   button: {
     position: 'absolute',
     bottom: verticalScale(60),
@@ -104,7 +125,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(50),
     borderRadius: scale(20),
   },
-
   buttonText: {
     color: '#FFFCFD',
     fontSize: scale(18),
