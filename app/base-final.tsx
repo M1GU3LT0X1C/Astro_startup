@@ -79,24 +79,19 @@ export default function BaseFinal() {
 
     mostrarConfirmacao(
       'Finalizar cadastro',
-      'Tem certeza que deseja ativar sua Base Estelar?',
+      'Tem certeza que deseja finalizar o cadastro da sua Base Estelar?',
       () => salvarCadastro(),
-      'Ativar'
+      'Finalizar'
     );
   }
 
   async function salvarCadastro() {
     setLoading(true);
     try {
-      // 1. CRIA O USUÁRIO - mas Base não tem senha ainda, né?
-      // Se não tiver senha no cadastro-base, você precisa adicionar
-      // Por enquanto vou assumir que tem email só e gera senha temporária
-
-      const senhaTemp = Math.random().toString(36).slice(-8) + 'A1!'; // senha aleatória
-
+      // 1. CRIA O USUÁRIO COM A SENHA DO FORM
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: params.email as string,
-        password: senhaTemp, // ← TÁ GERANDO SENHA TEMPORÁRIA
+        password: params.senha as string,
       });
 
       if (authError) throw authError;
@@ -136,26 +131,26 @@ export default function BaseFinal() {
         console.log('AVATAR URL:', avatarUrl);
       }
 
-      // 3. ATUALIZA OS METADADOS - BASE ESTELAR
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          nome_completo: params.nome,
-          tipo_usuario: 'base_estelar', // ← MUDANÇA AQUI
-          cnpj: params.cnpj,
-          cep: params.cep,
-          numero: params.numero, // ← telefone
-          rede_social: params.rede,
-          bio: bio,
-          avatar_url: avatarUrl,
-        }
+      // 3. INSERT NA TABELA USUARIOS
+      const { error: dbError } = await supabase.from('usuarios').insert({
+        id: userId,
+        nome: params.nome,
+        email: params.email,
+        cnpj: params.cnpj,
+        cep: params.cep,
+        numero: params.numero,
+        rede_social: params.rede,
+        bio: bio,
+        avatar_url: avatarUrl,
+        tipo_usuario: 'base_estelar',
       });
 
-      if (updateError) throw updateError;
+      if (dbError) throw dbError;
 
       Toast.show({
         type: 'success',
         text1: 'Base Estelar ativada! 🚀',
-        text2: 'Confirma seu email pra acessar',
+        text2: 'Bem vindo ao Astro.',
         visibilityTime: 4000,
       });
 

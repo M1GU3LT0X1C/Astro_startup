@@ -25,12 +25,15 @@ export default function Home() {
         <Image source={require('../assets/images/not.png')} style={styles.iconSmall} />
       </View>
 
-      {/* POST INPUT */}
-      <View style={styles.postBox}>
+      {/* POST INPUT - AGORA CLICÁVEL */}
+      <TouchableOpacity 
+        style={styles.postBox}
+        onPress={() => router.push('/novo-post')} // ← ADICIONA ISSO
+      >
         <Image source={require('../assets/images/gabriela.png')} style={styles.avatar} />
         <Text style={styles.postPlaceholder}>Poste algo...</Text>
         <Image source={require('../assets/images/galeria.png')} style={styles.iconMedium} />
-      </View>
+      </TouchableOpacity>
 
       {/* FEED */}
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -90,11 +93,11 @@ export default function Home() {
           <Image source={require('../assets/images/add.png')} style={styles.addIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/chat-base')}>
           <Image source={require('../assets/images/chat.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/perfil')}>
           <Image source={require('../assets/images/perfil.png')} style={styles.navIcon} />
         </TouchableOpacity>
       </View>
@@ -202,6 +205,11 @@ const styles = StyleSheet.create({
     borderRadius: scale(30),
     alignItems: 'center',
     gap: scale(20),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
 
   navIcon: {
@@ -210,16 +218,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
-    addButton: {
+  addButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    },
+  },
 
-    addIcon: {
+  addIcon: {
     width: scale(40),
     height: scale(40),
     resizeMode: 'contain',
-    },
+  },
 
   iconSmall: {
     width: scale(20),

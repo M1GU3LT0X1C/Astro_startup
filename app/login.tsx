@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Toast from 'react-native-toast-message'; // ← ADICIONA ISSO
+import Toast from 'react-native-toast-message';
 import { supabase } from '../lib/supabase';
 
 const { width, height } = Dimensions.get('window');
@@ -26,9 +27,10 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [salvar, setSalvar] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const handleLogin = async () => {
-    if (!email ||!senha) {
+    if (!email || !senha) {
       Toast.show({
         type: 'error',
         text1: 'Campos vazios',
@@ -52,14 +54,35 @@ export default function Login() {
         return;
       }
 
+      // PEGA O TIPO DE USUÁRIO
+      const { data: userData } = await supabase
+        .from('usuarios')
+        .select('tipo_usuario, nome')
+        .eq('id', data.user.id)
+        .single();
+
       Toast.show({
         type: 'success',
-        text1: 'Bem-vindo ao Astro 🚀',
+        text1: `Bem-vindo, ${userData?.nome || 'Astro'} 🚀`,
         text2: 'Entrando...',
         visibilityTime: 2000,
       });
 
-      setTimeout(() => router.push('/homebase'), 1000);
+      // REDIRECIONA PELA HOME CORRETA
+      setTimeout(() => {
+        switch (userData?.tipo_usuario) {
+          case 'guardiao':
+            router.replace('/homeguard'); // Guardião de Órbita
+            break;
+          case 'base':
+            router.replace('/homebase'); // Base Estelar
+            break;
+          case 'explorador':
+          default:
+            router.replace('/home'); // Explorador
+            break;
+        }
+      }, 1000);
 
     } catch (error) {
       console.log(error);
@@ -86,16 +109,31 @@ export default function Login() {
         placeholderTextColor="#777"
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#777"
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
+      {/* INPUT DE SENHA COM OLHINHO */}
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Senha"
+          placeholderTextColor="#777"
+          secureTextEntry={!mostrarSenha}
+          value={senha}
+          onChangeText={setSenha}
+        />
+        <TouchableOpacity 
+          onPress={() => setMostrarSenha(!mostrarSenha)}
+          style={styles.eyeIcon}
+        >
+          <Ionicons 
+            name={mostrarSenha ? 'eye-off' : 'eye'} 
+            size={scale(22)} 
+            color="#777" 
+          />
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
@@ -163,6 +201,24 @@ const styles = StyleSheet.create({
     marginBottom: scale(15),
     fontSize: scale(18),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+    borderRadius: scale(12),
+    marginBottom: scale(15),
+  },
+  passwordInput: {
+    flex: 1,
+    padding: scale(14),
+    fontSize: scale(18),
+    fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A',
+  },
+  eyeIcon: {
+    padding: scale(10),
   },
   checkboxContainer: {
     flexDirection: 'row',

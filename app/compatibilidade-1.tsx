@@ -1,35 +1,34 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get('window');
-
-// BASE
 const guidelineBaseWidth = 360;
-
-// SCALE
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 
 export default function Compatibilidade1() {
   const router = useRouter();
-  const params = useLocalSearchParams(); // Pega os dados do Usuário
+  const params = useLocalSearchParams();
   
-  // ADICIONEI: states pros novos campos
   const [moraEm, setMoraEm] = useState('');
   const [tempoCasa, setTempoCasa] = useState('');
   const [tevePets, setTevePets] = useState('');
 
-  // ADICIONEI: função que valida e passa tudo pra frente
   function avancar() {
-    if (!moraEm || !tempoCasa || !tevePets) {
-      Alert.alert('Erro', 'Responda todas as perguntas pra poder continuar.');
+    if (!moraEm.trim() || !tempoCasa.trim() || !tevePets.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Campos obrigatórios',
+        text2: 'Responda todas as perguntas pra continuar.',
+      });
       return;
     }
 
     router.push({
       pathname: '/compatibilidade-2',
       params: { 
-        ...params, // espalha tudo que veio: nome, email, senha, cpf, etc
+        ...params,
         mora_em: moraEm, 
         tempo_casa: tempoCasa, 
         teve_pets: tevePets 
@@ -39,8 +38,6 @@ export default function Compatibilidade1() {
 
   return (
     <View style={styles.container}>
-
-      {/* BACK */}
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => router.back()}
@@ -51,7 +48,6 @@ export default function Compatibilidade1() {
         />
       </TouchableOpacity>
 
-      {/* HEADER */}
       <Text style={styles.subtitle}>
         Dados de compatibilidade
       </Text>
@@ -61,10 +57,9 @@ export default function Compatibilidade1() {
       </Text>
 
       <Text style={styles.description}>
-        Sincere suas experiências. Estes dados ajudam a estação de apoio a confirmar se seu estilo e o destino ideal para o Astro que você quer adotar.
+        Sincronize suas experiências. Estes dados ajudam a estação de apoio a confirmar se seu estilo e o destino ideal para o Astro que você quer adotar.
       </Text>
 
-      {/* INPUTS - ADICIONEI: value e onChangeText */}
       <TextInput 
         placeholder="Você mora em:" 
         style={styles.input} 
@@ -89,26 +84,22 @@ export default function Compatibilidade1() {
         onChangeText={setTevePets}
       />
 
-      {/* BUTTON - ALTEREI: agora chama avancar() */}
       <TouchableOpacity
         style={styles.button}
         onPress={avancar}
       >
         <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
-
     </View>
   );
 }
 
-// STYLES IGUAIS - NÃO MEXI
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFCFD',
     padding: scale(20),
   },
-
   backButton: {
     width: scale(60),
     height: scale(50),
@@ -116,40 +107,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: scale(20),
   },
-
   backIcon: {
     width: scale(30),
     height: scale(30),
     resizeMode: 'contain',
   },
-
   title: {
     fontSize: scale(30),
     marginBottom: scale(20),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A'
   },
-
   subtitle: {
     fontSize: scale(20),
     marginBottom: scale(5),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A'
   },
-
   description: {
     fontSize: scale(12),
     color: '#555',
     marginBottom: scale(20),
     fontFamily: 'IstokWeb-Regular',
   },
-
   input: {
     backgroundColor: '#D9D9D9',
     padding: scale(15),
     borderRadius: scale(15),
     marginBottom: scale(15),
     fontFamily: 'IstokWeb-Regular',
+    color: '#1A1A1A',
+    fontSize: scale(14),
   },
-
   button: {
     backgroundColor: '#0D0062',
     padding: scale(15),
@@ -157,7 +146,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: scale(150),
   },
-
   buttonText: {
     color: '#fff',
     fontSize: scale(16),
