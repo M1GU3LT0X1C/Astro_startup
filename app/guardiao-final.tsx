@@ -3,10 +3,13 @@ import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
+// BASE
 const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
 
-const scale = (size: number) => (width / guidelineBaseWidth) * size;
+// SCALE
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 export default function GuardiaoFinal() {
   const router = useRouter();

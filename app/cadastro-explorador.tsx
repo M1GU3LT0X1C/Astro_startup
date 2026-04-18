@@ -8,7 +8,8 @@ const guidelineBaseWidth = 360;
 const guidelineBaseHeight = 800;
 
 // SCALE
-const scale = (size: number) => (width / guidelineBaseWidth) * size;
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 export default function CadastroExplorador() {
   const router = useRouter();

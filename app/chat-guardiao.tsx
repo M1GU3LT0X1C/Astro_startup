@@ -10,10 +10,15 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
+// BASE
 const guidelineBaseWidth = 360;
-const scale = (size: number) => (width / guidelineBaseWidth) * size;
+const guidelineBaseHeight = 800;
+
+// SCALE
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 const topUsers = [
   {

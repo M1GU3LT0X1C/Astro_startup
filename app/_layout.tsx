@@ -1,6 +1,8 @@
+import 'react-native-gesture-handler'; // 👈 IMPORTANTE (tem que ser o primeiro)
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function Layout() {
 
@@ -14,11 +16,13 @@ export default function Layout() {
   }
 
   return (
-    <Stack
-      initialRouteName="index"
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack
+        initialRouteName="index"
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </GestureHandlerRootView>
   );
 }

@@ -4,10 +4,21 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions
 } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+
+const { width, height } = Dimensions.get('window');
+
+// BASE
+const guidelineBaseWidth = 360;
+const guidelineBaseHeight = 800;
+
+// SCALE
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 export default function Login() {
   const router = useRouter();

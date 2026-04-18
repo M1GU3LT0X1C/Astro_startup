@@ -1,10 +1,15 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-const { width } = Dimensions.get('window');
+const { width , height} = Dimensions.get('window');
 
+// BASE
 const guidelineBaseWidth = 360;
-const scale = (size: number) => (width / guidelineBaseWidth) * size;
+const guidelineBaseHeight = 800;
+
+// SCALE
+const scale = (size:number) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size:number) => (height / guidelineBaseHeight) * size;
 
 export default function Home() {
   const router = useRouter();
@@ -78,7 +83,7 @@ export default function Home() {
           <Image source={require('../assets/images/info.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/match')}>
           <Image source={require('../assets/images/pata.png')} style={styles.navIcon} />
         </TouchableOpacity>
 
